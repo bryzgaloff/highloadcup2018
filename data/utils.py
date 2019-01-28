@@ -10,10 +10,10 @@ def account_json_to_db_row(account):
         account.get('sname'),
         *_extract_phone_info(account.get('phone')),
         account['sex'],
-        date.fromtimestamp(account['birth']),
+        *_unfold_date(account, 'birth'),
         account.get('country'),
         account.get('city'),
-        datetime.fromtimestamp(account['joined']),
+        *_unfold_date(account, 'joined'),
         account['status'],
         account.get('interests', []),
         *_unfold_premium_dates(account.get('premium')),
@@ -44,6 +44,11 @@ def _unfold_premium_dates(premium):
         return None, None
     values = premium['start'], premium['finish']
     return map(datetime.fromtimestamp, values)
+
+
+def _unfold_date(account, field):
+    timestamp = account[field]
+    return timestamp, datetime.fromtimestamp(timestamp).date().year
 
 
 def likes_to_row(account):
