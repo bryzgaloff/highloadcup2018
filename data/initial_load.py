@@ -8,8 +8,8 @@ from itertools import chain, tee
 import asyncpg
 
 from data.utils import account_json_to_db_row, likes_to_row
+from server.app import PG_CREDS
 
-PG_CREDS = dict(user='postgres', database='hlcup18')
 _DATA_FILE_PATH = os.path.join('/', 'tmp', 'data', 'data.zip')
 
 
