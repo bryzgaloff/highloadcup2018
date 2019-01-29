@@ -2,12 +2,14 @@ import re
 
 from aiohttp import web
 
+from server.handlers.utils import QueryTemplatesReplacer, alist
+
 
 async def accounts_filter(request):
     parsed_query_args = _parse_filter_conditions(request.query)
     if parsed_query_args is None:
-        raise web.HTTPBadRequest()
-    entries = await _alist(_get_entries(
+        raise web.HTTPBadRequest
+    entries = await alist(_get_entries(
         request.app['db'], *parsed_query_args, request.query['limit']
     ))
     return web.json_response(entries)
@@ -50,8 +52,7 @@ def _parse_filter_conditions(params):
 
         if field == 'birth':
             value = int(value)
-
-        if predicate in {'contains', 'any'}:
+        elif predicate in {'contains', 'any'}:
             value = value.split(',')
         values.append(value)
 
@@ -59,22 +60,13 @@ def _parse_filter_conditions(params):
 
 
 async def _get_entries(db_pool, predicates, values, fields, limit):
+    query = f'SELECT {",".join(fields)} FROM accounts ' \
+        f'WHERE {" AND ".join(predicates)} LIMIT {limit}'
+    query = re.sub('%s', QueryTemplatesReplacer(), query)
     async with db_pool.acquire() as conn:
-        query = f'SELECT {",".join(fields)} FROM accounts ' \
-                f'WHERE {" AND ".join(predicates)} LIMIT {limit}'
-        query = re.sub('%s', _QueryReplacer(), query)
         async with conn.transaction():
             async for row in conn.cursor(query, *values):
                 yield dict(row)
-
-
-class _QueryReplacer:
-    def __init__(self):
-        self._occurrence_no = 0
-
-    def __call__(self, match):
-        self._occurrence_no += 1
-        return f'${self._occurrence_no}'
 
 
 _NULL_CHECK_FIELDS = \
@@ -126,8 +118,3 @@ _PREDICATES_TO_SQL = {
         'now': 'now() BETWEEN premium_start AND premium_finish',
     },
 }
-
-
-async def _alist(async_gen):
-    """ :type async_gen: typing.AsyncGenerator """
-    return [item async for item in async_gen]

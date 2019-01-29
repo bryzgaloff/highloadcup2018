@@ -10,6 +10,7 @@ async def init_app():
     app = web.Application()
     app.add_routes([
         web.get('/accounts/filter/', accounts_filter),
+        web.get('/accounts/group/', accounts_group),
     ])
     app['db'] = await asyncpg.create_pool(**PG_CREDS).__aenter__()
     app.on_cleanup.append(_close_db_pool)
