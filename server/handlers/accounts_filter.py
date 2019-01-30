@@ -9,7 +9,7 @@ class AccountsFilterHandler(HandlerBase):
     def _parse_params(cls, query_params, _):
         predicates = []
         values = []
-        fields = set()
+        fields = {'id', 'email'}
 
         try:
             limit = query_params['limit']
@@ -26,7 +26,10 @@ class AccountsFilterHandler(HandlerBase):
                 return None
 
             if field not in {'interests', 'likes'}:
-                fields.add(field)
+                if field == 'premium':
+                    fields.update(('premium_start', 'premium_finish'))
+                else:
+                    fields.add(field)
 
             if predicate == 'null':
                 if field not in _NULL_CHECK_FIELDS or value not in {'0', '1'}:
@@ -43,13 +46,15 @@ class AccountsFilterHandler(HandlerBase):
                 return None
             predicates.append(expression)
 
-            if predicate == 'now':
-                value = now
-            elif field == 'birth':
+            if field == 'birth':
                 value = int(value)
             elif predicate in {'contains', 'any'}:
                 value = value.split(',')
-            values.append(value)
+
+            if predicate == 'now':
+                values.extend((now, now))
+            else:
+                values.append(value)
 
         return predicates, values, fields, limit
 
@@ -106,6 +111,6 @@ _PREDICATES_TO_SQL = {
         'contains': 'likees_ids @> %s',
     },
     'premium': {
-        'now': '%s BETWEEN premium_start AND premium_finish',
+        'now': 'premium_start <= %s AND %s <= premium_finish',
     },
 }
