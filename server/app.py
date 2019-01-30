@@ -7,18 +7,25 @@ PG_CREDS = dict(user='postgres', database='hlcup18')
 
 
 async def init_app():
-    app = web.Application()
-    app.add_routes([
-        web.get('/accounts/filter/', accounts_filter),
-        web.get('/accounts/group/', accounts_group),
+    accounts_app = web.Application()
+    accounts_app.add_routes([
+        web.get('/filter/', accounts_filter),
+        web.get('/group/', accounts_group),
     ])
-    app['db'] = await asyncpg.create_pool(**PG_CREDS).__aenter__()
-    app.on_cleanup.append(_close_db_pool)
+    accounts_app.cleanup_ctx.append(_db_pool)
+
+    app = web.Application()
+    app.add_subapp('/accounts/', accounts_app)
+
     return app
 
 
-async def _close_db_pool(app):
-    await app['db'].__aexit__()
+async def _db_pool(app):
+    pool = asyncpg.create_pool(**PG_CREDS)
+    await pool.__aenter__()
+    app['db'] = pool
+    yield
+    await pool.__aexit__()
 
 if __name__ == '__main__':
     web.run_app(init_app(), port=80)
