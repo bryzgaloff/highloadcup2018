@@ -9,8 +9,8 @@ PG_CREDS = dict(user='postgres', database='hlcup18')
 async def init_app():
     accounts_app = web.Application()
     accounts_app.add_routes([
-        web.get('/filter/', accounts_filter),
-        web.get('/group/', accounts_group),
+        web.get('/filter/', AccountsFilterHandler.handle),
+        web.get('/group/', AccountsGroupHandler.handle),
     ])
     accounts_app.cleanup_ctx.append(_db_pool)
 

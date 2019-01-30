@@ -1,2 +1,2 @@
-from .accounts_filter import accounts_filter
-from .accounts_group import accounts_group
+from .accounts_filter import AccountsFilterHandler
+from .accounts_group import AccountsGroupHandler
