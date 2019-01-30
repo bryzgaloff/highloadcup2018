@@ -1,5 +1,5 @@
 from operator import itemgetter
-from datetime import datetime, date
+from datetime import datetime
 
 
 def account_json_to_db_row(account):
@@ -42,8 +42,7 @@ def _extract_phone_info(phone):
 def _unfold_premium_dates(premium):
     if premium is None:
         return None, None
-    values = premium['start'], premium['finish']
-    return map(datetime.fromtimestamp, values)
+    return premium['start'], premium['finish']
 
 
 def _unfold_date(account, field):
@@ -55,8 +54,4 @@ def likes_to_row(account):
     if 'likes' not in account:
         return
     for like in account['likes']:
-        yield (
-            account['id'],
-            like['id'],
-            datetime.fromtimestamp(like['ts']),
-        )
+        yield (account['id'], like['id'], like['ts'])

@@ -24,13 +24,13 @@ CREATE TABLE accounts (
   joined_year INT,
   status VARCHAR(10),
   interests VARCHAR(100)[] NULL,
-  premium_start TIMESTAMP NULL,
-  premium_finish TIMESTAMP NULL,
+  premium_start INT NULL,
+  premium_finish INT NULL,
   likees_ids INT[] NULL
 );
 
 CREATE TABLE likes (
   liker_id INT, -- REFERENCES accounts (id),
   likee_id INT, -- REFERENCES accounts (id),
-  ts TIMESTAMP
+  ts INT
 );
