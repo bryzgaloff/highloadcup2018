@@ -1,3 +1,4 @@
+from data.now import now
 from ._abc import HandlerBase
 
 
@@ -43,9 +44,8 @@ class AccountsFilterHandler(HandlerBase):
             predicates.append(expression)
 
             if predicate == 'now':
-                continue
-
-            if field == 'birth':
+                value = now
+            elif field == 'birth':
                 value = int(value)
             elif predicate in {'contains', 'any'}:
                 value = value.split(',')
@@ -106,6 +106,6 @@ _PREDICATES_TO_SQL = {
         'contains': 'likees_ids @> %s',
     },
     'premium': {
-        'now': 'now() BETWEEN premium_start AND premium_finish',
+        'now': '%s BETWEEN premium_start AND premium_finish',
     },
 }
