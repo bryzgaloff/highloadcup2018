@@ -17,8 +17,8 @@ ENV LC_ALL en_US.UTF-8
 
 EXPOSE 80
 
-ENTRYPOINT []
-CMD ["/bin/bash", "maintenance/start-server.sh"]
+ENTRYPOINT ["/bin/bash", "maintenance/entrypoint.sh"]
+CMD ["python3.7", "-m", "server.app"]
 
 COPY maintenance/init-db.sql /docker-entrypoint-initdb.d/
 COPY . .

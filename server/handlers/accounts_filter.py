@@ -86,7 +86,7 @@ _PREDICATES_TO_SQL = {
     },
     'sname': {
         'eq': 'sname = %s',
-        'starts': 'sname LIKE %%s'
+        'starts': "sname LIKE '%%s'"
     },
     'phone': {
         'code': 'phone_code = %s',
