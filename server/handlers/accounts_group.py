@@ -55,8 +55,9 @@ class AccountsGroupHandler(HandlerBase):
 
     @classmethod
     def _prepare_query(cls, grouping_keys, order, limit, predicates, values):
+        where_clause = f'WHERE {" AND ".join(predicates)}' if predicates else ''
         query = f'SELECT {grouping_keys}, COUNT(*) AS count FROM accounts ' \
-            f'WHERE {" AND ".join(predicates)} GROUP BY {grouping_keys} ' \
+            f'{where_clause} GROUP BY {grouping_keys} ' \
             f'ORDER BY count, {grouping_keys} {order} LIMIT {limit}'
         return query, values
 

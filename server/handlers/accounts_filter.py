@@ -50,6 +50,8 @@ class AccountsFilterHandler(HandlerBase):
                 value = int(value)
             elif predicate in {'contains', 'any'}:
                 value = value.split(',')
+                if field == 'likes':
+                    value = list(map(int, value))
 
             if predicate == 'now':
                 values.extend((now, now))
@@ -86,7 +88,7 @@ _PREDICATES_TO_SQL = {
     },
     'sname': {
         'eq': 'sname = %s',
-        'starts': "sname LIKE '%%s'"
+        'starts': "sname LIKE '%' || %s"
     },
     'phone': {
         'code': 'phone_code = %s',
@@ -96,7 +98,7 @@ _PREDICATES_TO_SQL = {
     },
     'city': {
         'eq': 'city = %s',
-        'any': 'city IN (%s)',
+        'any': 'city = ANY(%s)',
     },
     'birth': {
         'lt': 'birth < %s',

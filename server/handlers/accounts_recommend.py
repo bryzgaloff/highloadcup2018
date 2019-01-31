@@ -23,6 +23,8 @@ class AccountsRecommendHandler(HandlerBase):
                 city = value
             elif key not in {'limit', 'query_id'}:
                 return None
+            if not value:
+                return None
 
         return account_id, country, city, limit
 
