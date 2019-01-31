@@ -1,2 +1,3 @@
 from .accounts_filter import AccountsFilterHandler
 from .accounts_group import AccountsGroupHandler
+from .accounts_recommend import AccountsRecommendHandler

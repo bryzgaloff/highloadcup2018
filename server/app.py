@@ -11,6 +11,7 @@ async def init_app():
     accounts_app.add_routes([
         web.get('/filter/', AccountsFilterHandler.handle),
         web.get('/group/', AccountsGroupHandler.handle),
+        web.get('/{account_id}/recommend/', AccountsRecommendHandler.handle),
     ])
     accounts_app.cleanup_ctx.append(_db_pool)
 
