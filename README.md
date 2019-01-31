@@ -10,5 +10,6 @@ Implemented:
 Stack:
 * Python (aiohttp)
 * PostgreSQL (asyncpg)
+* nginx + supervisord
 
 Status: Not Finished

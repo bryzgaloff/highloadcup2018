@@ -1,3 +1,5 @@
+import argparse
+
 import asyncpg
 from aiohttp import web
 
@@ -29,4 +31,8 @@ async def _db_pool(app):
     await pool.__aexit__()
 
 if __name__ == '__main__':
-    web.run_app(init_app(), port=80)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--path')
+    args = parser.parse_args()
+
+    web.run_app(init_app(), path=args.path)
