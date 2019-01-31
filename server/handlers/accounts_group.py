@@ -17,7 +17,10 @@ class AccountsGroupHandler(HandlerBase):
     @classmethod
     def _parse_params(cls, query_params, _):
         grouping_keys = order = None
-        limit = query_params.get('limit')
+        try:
+            limit = query_params['limit']
+        except (KeyError, ValueError, TypeError):
+            return None
         predicates = []
         values = []
 
@@ -48,7 +51,7 @@ class AccountsGroupHandler(HandlerBase):
 
                 values.append(value)
 
-        if not grouping_keys or not order or not limit:
+        if not grouping_keys or not order:
             return None
 
         return grouping_keys, order, limit, predicates, values

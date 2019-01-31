@@ -10,9 +10,9 @@ class AccountsRecommendHandler(HandlerBase):
     @classmethod
     def _parse_params(cls, query_params, path_params):
         try:
-            account_id = path_params['account_id']
-            limit = query_params['limit']
-        except KeyError:
+            account_id = int(path_params['account_id'])
+            limit = int(query_params['limit'])
+        except (KeyError, ValueError, TypeError):
             return None
 
         country = city = None
@@ -30,7 +30,7 @@ class AccountsRecommendHandler(HandlerBase):
 
     @classmethod
     def _prepare_query(cls, account_id, country, city, limit):
-        values = []
+        values = [account_id]
         where_clause = ''
         if country is not None:
             where_clause = f'WHERE country = %s'
@@ -53,7 +53,7 @@ class AccountsRecommendHandler(HandlerBase):
                     CASE WHEN sex = 'm' THEN 'f'
                          ELSE 'm' END AS opposite_sex
                 FROM accounts
-                WHERE id = {account_id}) AS source
+                WHERE id = %s) AS source
             JOIN accounts
                 ON accounts.sex = source.opposite_sex
                     AND accounts.interests && source.interests

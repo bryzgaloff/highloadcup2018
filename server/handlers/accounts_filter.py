@@ -12,8 +12,8 @@ class AccountsFilterHandler(HandlerBase):
         fields = {'id', 'email'}
 
         try:
-            limit = query_params['limit']
-        except KeyError:
+            limit = int(query_params['limit'])
+        except (KeyError, ValueError, TypeError):
             return None
 
         for key, value in query_params.items():
@@ -62,8 +62,9 @@ class AccountsFilterHandler(HandlerBase):
 
     @classmethod
     def _prepare_query(cls, predicates, values, fields, limit):
+        where_clause = f'WHERE {" AND ".join(predicates)}' if predicates else ''
         query = f'SELECT {",".join(fields)} FROM accounts ' \
-                f'WHERE {" AND ".join(predicates)} LIMIT {limit}'
+                f'{where_clause} LIMIT {limit}'
         return query, values
 
 
